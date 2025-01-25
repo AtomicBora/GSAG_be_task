@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 
+import { taskRouter, userRouter } from './routes';
 import { assertIsDefined } from './utils/assert';
 import logger from './utils/logger';
 
@@ -12,6 +13,11 @@ app.get('/healthcheck', (_, res) => {
 
 app.use(helmet());
 app.use(express.json());
+
+// simple versioning system for the API, better approach would be to use for example semver library
+
+app.use('/api/v1', userRouter);
+app.use('/api/v1', taskRouter);
 
 // this assert function will throw an error if SERVER_PORT is not defined in the environment variables
 
