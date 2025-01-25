@@ -15,11 +15,14 @@
     "dayjs": "^1.11.13",
     "express": ">=5.0.1",
     "helmet": "^8.0.0",
+    "pg": "^8.13.1",
     "pino": "^9.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.11",
+    "@typescript-eslint/parser": "^8.21.0",
     "eslint": "^9.19.0",
     "eslint-plugin-perfectionist": "^4.7.0",
     "pino-pretty": "^13.0.0",

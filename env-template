@@ -1,1 +1,7 @@
 SERVER_PORT=XXXX
+DB_USER=user
+DB_HOST=host
+DB_NAME=dbname
+DB_PASSWORD=password
+DB_PORT=port
+DB_MAX_CONNECTIONS=number_of_connections #e.g. 10

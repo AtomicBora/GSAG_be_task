@@ -1,5 +1,6 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
+import tsParser from "@typescript-eslint/parser";
 import perfectionist from 'eslint-plugin-perfectionist';
 
 export default tseslint.config(
@@ -11,7 +12,7 @@ export default tseslint.config(
 	tseslint.configs.stylisticTypeChecked,
 	{
 		languageOptions: {
-			parser: '@typescript-eslint/parser',
+			parser: tsParser,
 			parserOptions: {
 				project: './tsconfig.json',
 				tsconfigRootDir: import.meta.dirname,
