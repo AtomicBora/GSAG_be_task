@@ -1,0 +1,21 @@
+{
+  "name": "gsag_be_task",
+  "version": "1.0.0",
+  "description": "Backend task for BE software engineering position at GSAG",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Borivoje",
+  "license": "ISC",
+  "dependencies": {
+    "express": ">=5.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
