@@ -1,6 +1,8 @@
 import type { User } from '#types/User';
 
-import { genSalt, hash } from 'bcrypt';
+import { assertIsDefined } from '#@/utils/assert';
+import { compare, genSalt, hash } from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import poolClient from '../utils/createDBPool';
 import logger from '../utils/logger';
@@ -38,4 +40,43 @@ const createUserService = async (userData: User) => {
 	}
 };
 
-export { createUserService, isExistingEmail };
+const findUserByEmail = async (
+	email: string,
+	password: string
+): Promise<null | Pick<User, 'email' | 'password'>> => {
+	try {
+		const result = await poolClient.query<Pick<User, 'email' | 'password'>>(
+			'SELECT id, email, password FROM users WHERE email = $1',
+			[email]
+		);
+
+		if (result.rows.length === 0) {
+			logger.error('Invalid email or password');
+			return null;
+		}
+
+		const [user] = result.rows;
+
+		const isPasswordValid = await compare(password, user.password);
+
+		if (!isPasswordValid) {
+			logger.error('Invalid email or password');
+			return null;
+		}
+
+		return user;
+	} catch (error) {
+		logger.error('Error logging in:', error);
+		throw new Error('Error logging in');
+	}
+};
+
+const generateToken = (email: string) => {
+	assertIsDefined(
+		process.env.JWT_SECRET,
+		'JWT_SECRET is not defined'
+	);
+
+	return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
+export { createUserService, findUserByEmail, generateToken, isExistingEmail };

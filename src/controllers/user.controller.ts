@@ -1,7 +1,12 @@
 import type { User } from '#types/User';
 import type { Request, Response } from 'express';
 
-import { createUserService, isExistingEmail } from '#@/services/user.service';
+import {
+	createUserService,
+	findUserByEmail,
+	generateToken,
+	isExistingEmail
+} from '#@/services/user.service';
 
 import logger from '../utils/logger';
 
@@ -25,7 +30,7 @@ const createUser = async (
 		}
 
 		const userExists = await isExistingEmail(email);
-        
+
 		if (userExists) {
 			// hiding the error message for security reasons
 			res.status(409).send(
@@ -50,4 +55,27 @@ const createUser = async (
 	}
 };
 
-export { createUser };
+const loginUser = async (
+	req: Request<unknown, unknown, Pick<User, 'email' | 'password'>>,
+	res: Response
+) => {
+	try {
+		const { email, password } = req.body;
+
+		const user = await findUserByEmail(email, password);
+
+		if (!user) {
+			res.status(401).send('Invalid email or password');
+			return;
+		}
+
+		const token = generateToken(user.email);
+
+		res.status(200).json({ token });
+	} catch (err) {
+		logger.error(err);
+		res.status(400).send('Error logging in user');
+	}
+};
+
+export { createUser, loginUser };
