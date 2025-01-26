@@ -1,6 +1,7 @@
 import { CustomRequest, DecodedToken } from '#@/middleware/auth';
-import { createUserTaskService } from '#@/services/task.service';
+import { createUserTaskService, getAllTasks } from '#@/services/task.service';
 import { Task } from '#@/types/Task';
+import { User } from '#@/types/User';
 import logger from '#@/utils/logger';
 import { findByEmail } from '#@/utils/query.helpers';
 import { Request, Response } from 'express';
@@ -51,4 +52,35 @@ const createUserTask = async (
 	}
 };
 
-export { createUserTask };
+const getAllUserTasks = async (
+	req: Request<unknown, unknown, unknown, Pick<User, 'email'>>,
+	res: Response
+) => {
+	const { email } = (req as CustomRequest).token as DecodedToken;
+
+	const user = await findByEmail(email);
+
+	if (!user) {
+		logger.error(`User with email ${email} not found`);
+		res.status(404).json({
+			error: 'User not found. Refresh the page and try again.'
+		});
+		return;
+	}
+
+	const userId = user.id;
+
+	const tasks = await getAllTasks(userId);
+
+	if (!tasks) {
+		res.status(404).json({
+			error: `No tasks found for user ${userId.toString()}.`
+		});
+		logger.error(`No tasks found for user ${userId.toString()}.`);
+		return;
+	}
+
+	res.status(200).json({ tasks });
+};
+
+export { createUserTask, getAllUserTasks };

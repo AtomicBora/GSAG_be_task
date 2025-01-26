@@ -1,4 +1,7 @@
-import { createUserTask } from '#@/controllers/task.controller';
+import {
+	createUserTask,
+	getAllUserTasks
+} from '#@/controllers/task.controller';
 import { validateToken } from '#@/middleware/auth';
 import express from 'express';
 
@@ -6,7 +9,8 @@ const taskRouter = express.Router();
 
 taskRouter.post('/tasks', validateToken, createUserTask);
 
-// TODO create routes for getting all user tasks and tasks by id, and for updating and deleting tasks
-// taskRouter.get('/user/:id/tasks', validateToken, getAllUserTasks);
+taskRouter.get('/tasks', validateToken, getAllUserTasks);
+
+// TODO create routes for getting tasks by id, and for updating and deleting specific tasks
 
 export default taskRouter;

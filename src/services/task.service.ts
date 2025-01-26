@@ -43,4 +43,25 @@ const createUserTaskService = async (userId: number, task: Partial<Task>) => {
 	}
 };
 
-export { createUserTaskService };
+const getAllTasks = async (userId: number) => {
+	try {
+		const result = await poolClient.query<Task>(
+			'SELECT t.* FROM task_gs t JOIN user_task_gs ut ON t.id = ut.task_id WHERE ut.user_id = $1',
+			[userId]
+		);
+		logger.info(
+			`All tasks for user ${userId.toString()} retrieved!`,
+			result
+		);
+
+		return result.rows;
+	} catch (error) {
+		logger.error(
+			`Error getting all tasks for user ${userId.toString()}`,
+			error
+		);
+		return null;
+	}
+};
+
+export { createUserTaskService, getAllTasks };
