@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 
@@ -11,6 +12,7 @@ app.get('/healthcheck', (_, res) => {
 	res.sendStatus(200);
 });
 
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
