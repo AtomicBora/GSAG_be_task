@@ -4,9 +4,9 @@ import type { Request, Response } from 'express';
 import {
 	createUserService,
 	findUserByEmail,
-	generateToken,
-	isExistingEmail
+	generateToken
 } from '#@/services/user.service';
+import { isExistingEmail } from '#@/utils/query.helpers';
 
 import logger from '../utils/logger';
 
@@ -71,6 +71,7 @@ const loginUser = async (
 
 		const token = generateToken(user.email);
 
+		logger.info(`User ${user.email} logged in`);
 		res.status(200).json({ token });
 	} catch (err) {
 		logger.error(err);

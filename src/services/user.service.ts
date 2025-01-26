@@ -7,20 +7,10 @@ import jwt from 'jsonwebtoken';
 import poolClient from '../utils/createDBPool';
 import logger from '../utils/logger';
 
-const isExistingEmail = async (email: string): Promise<boolean> => {
-	try {
-		const result = await poolClient.query<{ exists: boolean }>(
-			'SELECT EXISTS (SELECT 1 FROM users WHERE email = $1)',
-			[email]
-		);
-		return result.rows[0].exists;
-	} catch (error) {
-		logger.error('Error checking if user exists:', error);
-		throw new Error('Error checking if user exists');
-	}
-};
-
-const createUserService = async (userData: User) => {
+/* 
+TODO: implement validation schema to validate user data.. joi/zod/yup, replace  Omit<User, 'id'> with DTO generated from schema 
+*/
+const createUserService = async (userData: Omit<User, 'id'>) => {
 	try {
 		const { email, first_name, last_name, password } = userData;
 
@@ -29,7 +19,7 @@ const createUserService = async (userData: User) => {
 		const hashedPassword = await hash(password, salt);
 
 		const newUser = await poolClient.query<User>(
-			'INSERT INTO users (email, first_name, last_name, password) VALUES($1, $2, $3, $4) RETURNING id',
+			'INSERT INTO user_gs (email, first_name, last_name, password) VALUES($1, $2, $3, $4) RETURNING id',
 			[email, first_name, last_name, hashedPassword]
 		);
 
@@ -46,7 +36,7 @@ const findUserByEmail = async (
 ): Promise<null | Pick<User, 'email' | 'password'>> => {
 	try {
 		const result = await poolClient.query<Pick<User, 'email' | 'password'>>(
-			'SELECT id, email, password FROM users WHERE email = $1',
+			'SELECT email, password FROM user_gs WHERE email = $1',
 			[email]
 		);
 
@@ -72,11 +62,8 @@ const findUserByEmail = async (
 };
 
 const generateToken = (email: string) => {
-	assertIsDefined(
-		process.env.JWT_SECRET,
-		'JWT_SECRET is not defined'
-	);
+	assertIsDefined(process.env.JWT_SECRET, 'JWT_SECRET is not defined');
 
 	return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
-export { createUserService, findUserByEmail, generateToken, isExistingEmail };
+export { createUserService, findUserByEmail, generateToken };
