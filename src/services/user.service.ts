@@ -64,6 +64,7 @@ const findUserByEmail = async (
 const generateToken = (email: string) => {
 	assertIsDefined(process.env.JWT_SECRET, 'JWT_SECRET is not defined');
 
-	return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+	return jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '24h' });
 };
+
 export { createUserService, findUserByEmail, generateToken };

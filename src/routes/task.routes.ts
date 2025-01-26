@@ -1,7 +1,9 @@
 import {
 	createUserTask,
+	deleteTaskById,
 	getAllUserTasks,
-	getTaskById
+	getTaskById,
+	updateTaskById
 } from '#@/controllers/task.controller';
 import { validateToken } from '#@/middleware/auth';
 import express from 'express';
@@ -14,6 +16,8 @@ taskRouter.get('/tasks', validateToken, getAllUserTasks);
 
 taskRouter.get('/task/:id', validateToken, getTaskById);
 
-// TODO create routes for getting tasks by id, and for updating and deleting specific tasks
+taskRouter.put('/task/:id', validateToken, updateTaskById);
+
+taskRouter.delete('/task/:id', validateToken, deleteTaskById);
 
 export default taskRouter;

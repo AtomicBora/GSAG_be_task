@@ -2,6 +2,7 @@ import { Task } from '#@/types/Task';
 import { UserTask } from '#@/types/User';
 import poolClient from '#@/utils/createDBPool';
 import logger from '#@/utils/logger';
+import { isExistingTask } from '#@/utils/query.helpers';
 
 const createUserTaskService = async (userId: number, task: Partial<Task>) => {
 	const { description, priority, status, title } = task;
@@ -82,4 +83,55 @@ const getSingleTask = async (taskId: number) => {
 	}
 };
 
-export { createUserTaskService, getAllTasks, getSingleTask };
+const updateSingleTask = async (task: Partial<Task>) => {
+	const { description, id, priority, status, title } = task;
+
+	const updatedTask = await poolClient.query<Task>(
+		`UPDATE task_gs SET description = $1, priority = $2, status = $3, title = $4 WHERE id = $5 RETURNING *`,
+		[description, priority, status, title, id]
+	);
+
+	if (updatedTask.rowCount === 0) {
+		logger.error(
+			'Error updating task! An error occurred while updating the task. Please contact the administrator.'
+		);
+		return null;
+	}
+
+	return updatedTask.rows[0];
+};
+
+const deleteTask = async (taskId: number) => {
+	try {
+		const taskExists = await isExistingTask(taskId);
+
+		if (!taskExists) {
+			logger.error(`Task with id ${taskId.toString()} does not exist!`);
+			return { affectedRows: 0, command: '', deleted: false, taskId };
+		}
+
+		const result = await poolClient.query(
+			'DELETE FROM task_gs WHERE id = $1',
+			[taskId]
+		);
+
+		return {
+			affectedRows: result.rowCount,
+			command: result.command,
+			deleted: true,
+			taskId
+		};
+	} catch (error) {
+		logger.error('Error deleting task');
+		logger.error(error);
+		return { affectedRows: 0, command: '', deleted: false, taskId };
+	}
+};
+
+export {
+	createUserTaskService,
+	deleteTask,
+	getAllTasks,
+	getSingleTask,
+	updateSingleTask
+};
