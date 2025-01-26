@@ -1,5 +1,9 @@
 import { CustomRequest, DecodedToken } from '#@/middleware/auth';
-import { createUserTaskService, getAllTasks } from '#@/services/task.service';
+import {
+	createUserTaskService,
+	getAllTasks,
+	getSingleTask
+} from '#@/services/task.service';
 import { Task } from '#@/types/Task';
 import { User } from '#@/types/User';
 import logger from '#@/utils/logger';
@@ -83,4 +87,31 @@ const getAllUserTasks = async (
 	res.status(200).json({ tasks });
 };
 
-export { createUserTask, getAllUserTasks };
+const getTaskById = async (
+	req: Request<Pick<Partial<Task>, 'id'>>,
+	res: Response
+) => {
+	const { id } = req.params;
+
+	if (!id || isNaN(id)) {
+		res.status(400).json({
+			error: 'Please provide task id.'
+		});
+		logger.error('Please provide task id.');
+		return;
+	}
+
+	const task = await getSingleTask(id);
+
+	if (!task) {
+		res.status(404).json({
+			error: `Task with id ${id.toString()} not found.`
+		});
+		logger.error(`Task with id ${id.toString()} not found.`);
+		return;
+	}
+
+	res.status(200).json(task);
+};
+
+export { createUserTask, getAllUserTasks, getTaskById };

@@ -49,6 +49,7 @@ const getAllTasks = async (userId: number) => {
 			'SELECT t.* FROM task_gs t JOIN user_task_gs ut ON t.id = ut.task_id WHERE ut.user_id = $1',
 			[userId]
 		);
+		// write to log file if needed for future reference
 		logger.info(
 			`All tasks for user ${userId.toString()} retrieved!`,
 			result
@@ -64,4 +65,21 @@ const getAllTasks = async (userId: number) => {
 	}
 };
 
-export { createUserTaskService, getAllTasks };
+const getSingleTask = async (taskId: number) => {
+	try {
+		const result = await poolClient.query<Task>(
+			'SELECT * FROM task_gs WHERE id = $1',
+			[taskId]
+		);
+
+		return result.rows[0];
+	} catch (error) {
+		logger.error(
+			`Error getting single task with id ${taskId.toString()}`,
+			error
+		);
+		return null;
+	}
+};
+
+export { createUserTaskService, getAllTasks, getSingleTask };
