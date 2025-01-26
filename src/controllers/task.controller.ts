@@ -34,6 +34,13 @@ const createUserTask = async (
 
 		const createdTask = await createUserTaskService(userId, task);
 
+		if (!createdTask) {
+			res.status(400).json({
+				error: 'Task not created! An error occurred while creating the task. Please contact the administrator.'
+			});
+			return;
+		}
+
 		res.status(201).json(createdTask);
 	} catch (error) {
 		logger.error(`Error creating task for user with email ${email}!`);
