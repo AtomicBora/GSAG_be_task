@@ -24,7 +24,7 @@ const createUser = async (
 		} = req.body;
 
 		if (password !== password_confirmation) {
-			res.send('Passwords do not match').status(401);
+			res.status(401).send('Passwords do not match');
 			logger.error('Passwords do not match');
 			return;
 		}
@@ -48,10 +48,10 @@ const createUser = async (
 			password_confirmation
 		});
 
-		res.json(newUser.rows[0]).status(201);
+		res.status(201).json(newUser.rows[0]);
 	} catch (err) {
 		logger.error(err);
-		res.status(400).send('Error creating user');
+		res.status(500).send('Error creating user');
 	}
 };
 
@@ -75,7 +75,7 @@ const loginUser = async (
 		res.status(200).json({ token });
 	} catch (err) {
 		logger.error(err);
-		res.status(400).send('Error logging in user');
+		res.status(500).send('Internal server error!');
 	}
 };
 
