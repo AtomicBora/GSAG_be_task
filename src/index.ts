@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 
+import swaggerDocs from '../swagger';
 import { taskRouter, userRouter } from './routes';
 import { assertIsDefined } from './utils/assert';
 import logger from './utils/logger';
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
+swaggerDocs(app);
 // simple versioning system for the API, better approach would be to use for example semver library
 
 app.use('/api/v1', userRouter);
