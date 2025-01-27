@@ -1,6 +1,6 @@
 import pg from 'pg';
 const { Pool } = pg;
-import { assertIsDefined } from './assert';
+import { assertIsDefined } from './assert.js';
 
 assertIsDefined(
 	process.env.DB_MAX_CONNECTIONS,

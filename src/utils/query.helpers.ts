@@ -1,7 +1,7 @@
 import { User } from '#@/types/User';
 
-import poolClient from './createDBPool';
-import logger from './logger';
+import poolClient from './createDBPool.js';
+import logger from './logger.js';
 
 const isExistingEmail = async (email: string): Promise<boolean> => {
 	try {

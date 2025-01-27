@@ -4,8 +4,8 @@ import { assertIsDefined } from '#@/utils/assert';
 import { compare, genSalt, hash } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import poolClient from '../utils/createDBPool';
-import logger from '../utils/logger';
+import poolClient from '../utils/createDBPool.js';
+import logger from '../utils/logger.js';
 
 /* 
 TODO: implement validation schema to validate user data.. joi/zod/yup, replace  Omit<User, 'id'> with DTO generated from schema 

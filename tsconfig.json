@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2020",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "CommonJS",                                /* Specify what module code is generated. */
+    "module": "NodeNext",                                /* Specify what module code is generated. */
+    "moduleResolution": "nodenext",
     "rootDir": "./",                                  /* Specify the root folder within your source files. */
     "outDir": "./dist",      
     "baseUrl": ".",                             /* Specify an output folder for all emitted files. */

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import express from 'express';
-import { OpenAPIObject } from 'openapi3-ts/dist/oas30';
+import { OpenAPIObject } from 'openapi3-ts/oas30';
 import swaggerJsdoc, { Options } from 'swagger-jsdoc';
 import { serve, setup } from 'swagger-ui-express';
 

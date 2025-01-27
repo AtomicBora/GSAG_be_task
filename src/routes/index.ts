@@ -1,4 +1,4 @@
-import taskRouter from './task.routes';
-import userRouter from './user.routes';
+import taskRouter from './task.routes.js';
+import userRouter from './user.routes.js';
 
 export { taskRouter, userRouter };

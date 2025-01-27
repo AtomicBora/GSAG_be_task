@@ -2,10 +2,10 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 
-import swaggerDocs from '../swagger';
-import { taskRouter, userRouter } from './routes';
-import { assertIsDefined } from './utils/assert';
-import logger from './utils/logger';
+import swaggerDocs from '../swagger.js';
+import { taskRouter, userRouter } from './routes/index.js';
+import { assertIsDefined } from './utils/assert.js';
+import logger from './utils/logger.js';
 
 const app = express();
 

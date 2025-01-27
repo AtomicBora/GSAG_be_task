@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --env-file=.env --import=tsx --watch ./src/index.ts"
+    "dev": "node --env-file=.env --import=tsx --watch ./src/index.ts",
+    "build": "tsc",
+    "start": "node --env-file=.env ./dist/src/index.js",
+    "prod": "pnpm run build && pnpm run start"
   },
   "keywords": [],
   "author": "Borivoje",
@@ -42,8 +45,8 @@
     "typescript-eslint": "^8.21.0"
   },
   "imports": {
-    "#@/*": "./src/*.js",
-    "#types/*": "./src/types/*.js"
+    "#@/*": "./dist/src/*.js",
+    "#types/*": "./dist/src/types/*.js"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

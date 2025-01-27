@@ -8,7 +8,7 @@ import {
 } from '#@/services/user.service';
 import { isExistingEmail } from '#@/utils/query.helpers';
 
-import logger from '../utils/logger';
+import logger from '../utils/logger.js';
 
 const createUser = async (
 	req: Request<unknown, unknown, User>,

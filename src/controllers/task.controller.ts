@@ -297,9 +297,9 @@ const deleteTaskById = async (
 
 		await removeUserTaskAssociation(userId, taskId);
 
-		const deletedTask = await deleteTask(taskId);
+		await deleteTask(taskId);
 
-		res.status(204).json(deletedTask);
+		res.status(204);
 	} catch (error) {
 		logger.error(`Error deleting task with id ${taskId.toString()}!`);
 		logger.error(error);
