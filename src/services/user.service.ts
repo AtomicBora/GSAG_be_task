@@ -19,7 +19,7 @@ const createUserService = async (userData: Omit<User, 'id'>) => {
 		const hashedPassword = await hash(password, salt);
 
 		const newUser = await poolClient.query<User>(
-			'INSERT INTO user_gs (email, first_name, last_name, password) VALUES($1, $2, $3, $4) RETURNING id',
+			'INSERT INTO gs_user (email, first_name, last_name, password) VALUES($1, $2, $3, $4) RETURNING id',
 			[email, first_name, last_name, hashedPassword]
 		);
 
@@ -36,7 +36,7 @@ const findUserByEmail = async (
 ): Promise<null | Pick<User, 'email' | 'password'>> => {
 	try {
 		const result = await poolClient.query<Pick<User, 'email' | 'password'>>(
-			'SELECT email, password FROM user_gs WHERE email = $1',
+			'SELECT email, password FROM gs_user WHERE email = $1',
 			[email]
 		);
 

@@ -28,7 +28,7 @@ const createUser = async (
 			logger.error('Passwords do not match');
 			return;
 		}
-
+		
 		const userExists = await isExistingEmail(email);
 
 		if (userExists) {
@@ -51,7 +51,7 @@ const createUser = async (
 		res.status(201).json(newUser.rows[0]);
 	} catch (err) {
 		logger.error(err);
-		res.status(500).send('Error creating user');
+		res.status(500).send('Internal server error! User not created.');
 	}
 };
 

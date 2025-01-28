@@ -28,7 +28,8 @@ To install pnpm run
 ### Database
 
 ---
-For this project I have used __PostgreSQL 17.2__
+
+For this project I have used **PostgreSQL 17.2**
 [Download PostgreSQL --- Official Webpage](https://www.postgresql.org/download/)
 
 Once the versions are aligned with the project requirements and all of the required dependencies installed clone env-temaplte, and replace the values with your own.
@@ -47,9 +48,36 @@ If you want to run the development environment, use the `pnpm dev` command.
 
 This project has OpenAPI definitions (Swagger) describing routes, When the project is up and running, you can access `/docs` to see and use Swagger UI.
 
-> I made Postman collection as well. It can be found on this link: 
+> I made Postman collection as well. It can be found on this link:
 > [Postman Collection](https://mega.nz/file/6tMWQKJB#ioLC0CsLTcKnjmt8_0n8Rh7g0JETxK7UBgrNuJ2TFlE)
 
 Download it, and import in your postman. Register a user, login and retrieve token, create environment variable Bearer and provide the token to it. Now you can access the rest of the routes.
 
-Docker and docker compose file to run this project inside of a container are comming soon...
+### Docker
+
+---
+
+To run the project in a Docker container, you can run the following commands:
+
+> Since the container is linked to the build from the host machine, we need to build and run the project before creating and running the container.
+
+> add NODE_ENV=production to the .env file if you don't have it already.
+
+```
+pnpm prod
+```
+Once it's running, exit the process and build the Docker image:
+```
+
+docker-compose -p <container_name> build --no-cache # replace <container_name> with your desired name for the container, I used gsag_be_task
+docker-compose -p gsag_be_task up -d
+
+docker ps # to check if the container is running and get the container ID
+
+docker exec -it <container_ID> psql -U postgres -f /docker-entrypoint-initdb.d/database_schema.sql # replace <container_ID> with the ID of the container you just created to create the database and tables.
+
+```
+
+This will build the Docker image and run the project in a container. The container will expose port 3000, so you can access it on your host machine at `http://localhost:3000`. The database connection details are stored in the `.env` file, so you can modify them as needed.
+
+That's it! You can now access the API on `http://localhost:3000` and use the Swagger UI or Postman collection to interact with the API.

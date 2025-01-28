@@ -6,20 +6,20 @@ import logger from './logger.js';
 const isExistingEmail = async (email: string): Promise<boolean> => {
 	try {
 		const result = await poolClient.query<{ exists: boolean }>(
-			'SELECT EXISTS (SELECT 1 FROM user_gs WHERE email = $1)',
+			'SELECT EXISTS (SELECT 1 FROM gs_user WHERE email = $1)',
 			[email]
 		);
 		return result.rows[0].exists;
 	} catch (error) {
 		logger.error('Error checking if user exists:', error);
-		throw new Error('Error checking if user exists');
+		return false;
 	}
 };
 
 const isExistingTask = async (taskId: number) => {
 	try {
 		const result = await poolClient.query<{ exists: boolean }>(
-			'SELECT EXISTS(SELECT * FROM task_gs WHERE id = $1)',
+			'SELECT EXISTS(SELECT * FROM gs_task WHERE id = $1)',
 			[taskId]
 		);
 		return result.rows[0].exists;
@@ -38,7 +38,7 @@ const checkIsUserTaskCreator = async (
 ): Promise<boolean> => {
 	try {
 		const result = await poolClient.query(
-			'SELECT * FROM user_task_gs WHERE user_id = $1 AND task_id = $2',
+			'SELECT * FROM gs_user_task WHERE gs_user_id = $1 AND gs_task_id = $2',
 			[userId, taskId]
 		);
 
@@ -54,21 +54,30 @@ const checkIsUserTaskCreator = async (
 
 const removeUserTaskAssociation = async (userId: number, taskId: number) => {
 	try {
-		await poolClient.query(
-			'DELETE FROM user_task_gs WHERE user_id = $1 AND task_id = $2',
+		const result = await poolClient.query(
+			'DELETE FROM gs_user_task WHERE gs_user_id = $1 AND gs_task_id = $2',
 			[userId, taskId]
 		);
+
+		if (result.rowCount === 0) {
+			logger.info('No user-task association found!');
+			return false;
+		}
+
+		logger.info(`User-task association removed!`);
+		return true;
 	} catch (error) {
 		logger.error(
 			`Error removing user with id ${userId.toString()} from task with id ${taskId.toString()}`,
 			error
 		);
+		return false;
 	}
 };
 
 const findByEmail = async (email: string) => {
 	const user = await poolClient.query<User>(
-		'SELECT * FROM user_gs WHERE email = $1',
+		'SELECT * FROM gs_user WHERE email = $1',
 		[email]
 	);
 	if (user.rows.length === 0) {

@@ -6,3 +6,4 @@ DB_PASSWORD=password
 DB_PORT=port
 DB_MAX_CONNECTIONS=number_of_connections #e.g. 10
 JWT_SECRET="my-super-safe-secret-key"
+NODE_ENV=xxxxxxx

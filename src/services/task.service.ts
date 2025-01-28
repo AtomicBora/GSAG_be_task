@@ -10,7 +10,7 @@ const createUserTaskService = async (userId: number, task: Partial<Task>) => {
 	try {
 		// TODO: create helper function to insert task
 		const result = await poolClient.query<Task>(
-			'INSERT INTO task_GS (title, description, priority, status) VALUES ($1, $2, $3, $4) RETURNING *',
+			'INSERT INTO gs_task (title, description, priority, status) VALUES ($1, $2, $3, $4) RETURNING *',
 			[title, description, priority, status]
 		);
 
@@ -18,7 +18,7 @@ const createUserTaskService = async (userId: number, task: Partial<Task>) => {
 
 		const jointTableUpdateResult = await poolClient.query<
 			Pick<UserTask, 'task_id' | 'user_id'>
-		>('INSERT INTO user_task_GS (user_id, task_id) VALUES ($1, $2)', [
+		>('INSERT INTO gs_user_task (gs_user_id, gs_task_id) VALUES ($1, $2)', [
 			userId,
 			taskId
 		]);
@@ -47,7 +47,7 @@ const createUserTaskService = async (userId: number, task: Partial<Task>) => {
 const getAllTasks = async (userId: number) => {
 	try {
 		const result = await poolClient.query<Task>(
-			'SELECT t.* FROM task_gs t JOIN user_task_gs ut ON t.id = ut.task_id WHERE ut.user_id = $1',
+			'SELECT t.* FROM gs_task t JOIN gs_user_task ut ON t.id = ut.gs_task_id WHERE ut.gs_user_id = $1',
 			[userId]
 		);
 		// write to log file if needed for future reference
@@ -69,7 +69,7 @@ const getAllTasks = async (userId: number) => {
 const getSingleTask = async (taskId: number) => {
 	try {
 		const result = await poolClient.query<Task>(
-			'SELECT * FROM task_gs WHERE id = $1',
+			'SELECT * FROM gs_task WHERE id = $1',
 			[taskId]
 		);
 
@@ -87,7 +87,7 @@ const updateSingleTask = async (task: Partial<Task>) => {
 	const { description, id, priority, status, title } = task;
 
 	const updatedTask = await poolClient.query<Task>(
-		`UPDATE task_gs SET description = $1, priority = $2, status = $3, title = $4 WHERE id = $5 RETURNING *`,
+		`UPDATE gs_task SET description = $1, priority = $2, status = $3, title = $4 WHERE id = $5 RETURNING *`,
 		[description, priority, status, title, id]
 	);
 
@@ -111,7 +111,7 @@ const deleteTask = async (taskId: number) => {
 		}
 
 		const result = await poolClient.query(
-			'DELETE FROM task_gs WHERE id = $1',
+			'DELETE FROM gs_task WHERE id = $1',
 			[taskId]
 		);
 

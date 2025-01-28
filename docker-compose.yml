@@ -1,0 +1,41 @@
+services:
+  postgresql_server:
+    image: postgres:17.2-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_MAX_CONNECTIONS=${DB_MAX_CONNECTIONS}
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+      - ./db/database_schema.sql:/docker-entrypoint-initdb.d/database_schema.sql
+    # command: psql -U ${DB_USER} -f /docker-entrypoint-initdb.d/database_schema.sql
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+  backend:
+    container_name: Express_Backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${SERVER_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=postgresql_server
+      - DB_PORT=${DB_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    working_dir: /app
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    depends_on:
+      - postgresql_server
+    restart: unless-stopped
+
+volumes:
+  postgresql_data:
+    driver: local

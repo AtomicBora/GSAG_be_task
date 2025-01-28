@@ -295,11 +295,34 @@ const deleteTaskById = async (
 			return;
 		}
 
-		await removeUserTaskAssociation(userId, taskId);
+		const removedAssociation = await removeUserTaskAssociation(
+			userId,
+			taskId
+		);
 
-		await deleteTask(taskId);
+		if (!removedAssociation) {
+			res.status(400).json({
+				error: 'No user task relation found! Database integrity error. Please contact the administrator.'
+			});
+			logger.error(
+				'No user task relation found! Database integrity error. Please contact the administrator.'
+			);
+			return;
+		}
 
-		res.status(204);
+		const result = await deleteTask(taskId);
+
+		if (!result.deleted) {
+			res.status(400).json({
+				error: 'Deleting task failed! Please contact the administrator.'
+			});
+			logger.error(
+				'Deleting task failed! Please contact the administrator.'
+			);
+			return;
+		}
+
+		res.status(204).end();
 	} catch (error) {
 		logger.error(`Error deleting task with id ${taskId.toString()}!`);
 		logger.error(error);
